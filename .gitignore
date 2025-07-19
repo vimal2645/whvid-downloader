@@ -1,0 +1,38 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+
+# Virtual environment
+venv/
+env/
+
+# Environment variables
+.env
+
+# IDE / Editor configs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Downloaded media files
+downloads/
+*.mp3
+*.mp4
+
+# Node modules (if you have frontend)
+node_modules/
+
+# Docker volumes (optional)
+*.pid
+
+# Static build
+build/
+dist/

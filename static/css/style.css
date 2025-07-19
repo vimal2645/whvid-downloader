@@ -1,0 +1,222 @@
+/* ==== GLOBAL STYLES ==== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  background: linear-gradient(-45deg, #00f0ff, #00ff00, #ffff00, #ff6600, #ff0000, #9900ff, #00f0ff);
+  background-size: 400% 400%;
+  animation: backgroundShift 4s linear infinite;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.5s ease;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  button, input[type="submit"] {
+    width: 100%;
+  }
+}
+
+@keyframes backgroundShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==== CONTAINER ==== */
+.container {
+  max-width: 800px;
+  width: 90%;
+  margin: 40px auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+/* ==== INPUT FIELDS ==== */
+input[type="text"], select {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 12px 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 16px;
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+input[type="text"]::placeholder {
+  color: #ccc;
+}
+
+input[type="text"]:hover,
+select:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ==== BUTTONS ==== */
+button, input[type="submit"] {
+  background: #00e6e6;
+  color: #000;
+  padding: 12px 20px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.4s ease;
+}
+
+button:hover, input[type="submit"]:hover {
+  background: #00b3b3;
+  transform: scale(1.05);
+}
+
+button:active,
+input[type="submit"]:active {
+  transform: scale(0.95);
+}
+
+/* ==== TITLE ==== */
+h1, .animated-title {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #00f0ff, #00ff00, #ffff00, #ff6600, #ff0000, #9900ff, #00f0ff);
+  background-size: 500%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animatedText 3s linear infinite;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+@keyframes animatedText {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* ==== VIDEO ITEM ==== */
+.video-item {
+  background: linear-gradient(135deg, #002244, #004466, #006688);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 700px;
+  animation: popUp 0.6s ease, backgroundPulse 5s linear infinite;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+@keyframes popUp {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes backgroundPulse {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+  100% { filter: brightness(1); }
+}
+
+/* ==== VIDEO DISPLAY ==== */
+.ratio iframe,
+video {
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
+  animation: fadeInVideo 0.8s ease;
+  max-width: 100%;
+}
+
+@keyframes fadeInVideo {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ==== DOWNLOAD BUTTONS ==== */
+a.download-btn {
+  display: inline-block;
+  background: linear-gradient(45deg, #00e6e6, #00ffcc);
+  padding: 10px 18px;
+  border-radius: 6px;
+  margin: 10px 8px 0;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+a.download-btn:hover {
+  background: linear-gradient(45deg, #00ffcc, #00e6e6);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.9);
+  transform: scale(1.05);
+}
+
+/* ==== LINK STYLING ==== */
+a {
+  color: #00e6e6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #00ffcc;
+}
+
+/* ==== CARD HOVER ==== */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+/* ==== DARK/LIGHT MODE TOGGLE (optional JS needed) ==== */
+body.light-mode {
+  background: #fff;
+  color: #000;
+}
+
+body.light-mode .container {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode input,
+body.light-mode select,
+body.light-mode button {
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
+}
+
+body.light-mode a {
+  color: #007acc;
+}
+
+body.light-mode h1 {
+  -webkit-text-fill-color: initial;
+  color: #333;
+  background: none;
+  background-clip: unset;
+  animation: none;
+}
