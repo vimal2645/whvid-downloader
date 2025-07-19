@@ -1,11 +1,12 @@
 services:
   - type: web
     name: whvid-downloader
-    runtime: python
-    repo: https://github.com/vimal2645/whvid-downloader
-    branch: master
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: FLASK_ENV
         value: production
+      - key: PORT
+        value: 5000

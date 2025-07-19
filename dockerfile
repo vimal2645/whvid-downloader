@@ -1,21 +1,22 @@
-# Use slim Python image
-FROM python:3.10-slim
+# Use official Python slim image
+FROM python:3.11-slim
 
-# Set work directory
+# Set working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy rest of the app
+# Copy app files
 COPY . .
 
-# Create folders inside container
-RUN mkdir -p downloads
+# Install system dependencies
+RUN apt-get update && apt-get install -y ffmpeg curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Expose port
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Expose the port used by the app
 EXPOSE 5000
 
-# Run with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Start the app with Gunicorn
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5000"]
