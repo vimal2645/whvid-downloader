@@ -27,36 +27,41 @@ def init_db():
 
 init_db()
 
-# Download video with audio in given quality
+# Download video
 def download_video(url, quality):
     ydl_opts = {
         'format': f'bestvideo[height<={quality}]+bestaudio/best',
         'outtmpl': os.path.join(app.config['DOWNLOAD_FOLDER'], '%(title)s.%(ext)s'),
         'merge_output_format': 'mp4',
-        'http_chunk_size': None,
+        'quiet': True,
+        'noplaylist': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0'
+        },
         'postprocessors': [{
             'key': 'FFmpegVideoConvertor',
             'preferedformat': 'mp4'
-        }],
-        'noplaylist': True,
-        'quiet': True
+        }]
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info).replace('.webm', '.mp4').replace('.mkv', '.mp4')
         return info.get('title', 'No Title'), filename
 
-# Download audio only
+# Download audio
 def download_audio(url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': os.path.join(app.config['DOWNLOAD_FOLDER'], '%(title)s.%(ext)s'),
+        'quiet': True,
+        'noplaylist': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0'
+        },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-        }],
-        'noplaylist': True,
-        'quiet': True
+            'preferredcodec': 'mp3'
+        }]
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
@@ -82,21 +87,13 @@ def index():
                 (title, url, filepath, audio_path, date_downloaded)
             )
             conn.commit()
-            
-            # fetch only the latest video
             cursor.execute("SELECT * FROM videos ORDER BY id DESC LIMIT 1")
             videos = cursor.fetchall()
             conn.close()
         except Exception as e:
-            return f"Error: {e}"
-    else:
-        # On GET, don't show any videos (optional)
-        videos = []
-
+            return f"<h2 style='color:red;'>Error: {e}</h2>"
     return render_template("index.html", videos=videos)
 
-
-# Download video
 @app.route("/download/<int:video_id>")
 def download(video_id):
     conn = sqlite3.connect('videos.db')
@@ -108,7 +105,6 @@ def download(video_id):
         return send_file(row[0], as_attachment=True)
     return "Video not found", 404
 
-# Download audio
 @app.route("/audio/<int:video_id>")
 def download_audio_file(video_id):
     conn = sqlite3.connect('videos.db')
@@ -120,5 +116,6 @@ def download_audio_file(video_id):
         return send_file(row[0], as_attachment=True)
     return "Audio not found", 404
 
+# ✅ This block only runs locally (ignored on Render with Gunicorn)
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
