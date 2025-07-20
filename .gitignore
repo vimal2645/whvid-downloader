@@ -36,3 +36,10 @@ node_modules/
 # Static build
 build/
 dist/
+# .gitignore
+__pycache__/
+*.pyc
+downloads/
+cookies*.txt
+videos.db
+.env
