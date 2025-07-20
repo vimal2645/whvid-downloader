@@ -1,12 +1,9 @@
 services:
   - type: web
-    name: whvid-downloader
-    runtime: docker
-    plan: free
-    region: oregon
-    dockerfilePath: ./Dockerfile
+    name: flask-video-downloader
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: PORT
-        value: 5000
