@@ -34,7 +34,7 @@ def get_cookie_file(url):
     elif 'youtube.com' in url or 'youtu.be' in url:
         return 'cookies_youtube.txt'
     else:
-        return 'cookies.txt'  # default fallback
+        return ''  # No cookies for other sites
 
 # ---------- Download full video ----------
 def download_video(url, quality='720'):
@@ -45,9 +45,11 @@ def download_video(url, quality='720'):
         'quiet': True,
         'noplaylist': True,
         'merge_output_format': 'mp4',
-        'cookiefile': cookie_file,
         'http_headers': {'User-Agent': 'Mozilla/5.0'}
     }
+    if cookie_file and os.path.exists(cookie_file):
+        ydl_opts['cookiefile'] = cookie_file
+
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info).replace('.webm', '.mp4').replace('.mkv', '.mp4')
@@ -61,13 +63,15 @@ def download_audio(url):
         'outtmpl': os.path.join(app.config['DOWNLOAD_FOLDER'], '%(title)s.%(ext)s'),
         'quiet': True,
         'noplaylist': True,
-        'cookiefile': cookie_file,
         'http_headers': {'User-Agent': 'Mozilla/5.0'},
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3'
         }]
     }
+    if cookie_file and os.path.exists(cookie_file):
+        ydl_opts['cookiefile'] = cookie_file
+
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = os.path.join(app.config['DOWNLOAD_FOLDER'], info['title'] + ".mp3")
