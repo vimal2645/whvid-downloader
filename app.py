@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['DOWNLOAD_FOLDER'] = 'downloads'
 os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
 
-# Initialize SQLite database
+# ---------- Initialize SQLite DB ----------
 def init_db():
     conn = sqlite3.connect('videos.db')
     cursor = conn.cursor()
@@ -27,15 +27,25 @@ def init_db():
 
 init_db()
 
-# Download video with yt-dlp and cookies
+# ---------- Determine which cookies to use ----------
+def get_cookie_file(url):
+    if 'instagram.com' in url:
+        return 'cookies_instagram.txt'
+    elif 'youtube.com' in url or 'youtu.be' in url:
+        return 'cookies_youtube.txt'
+    else:
+        return 'cookies.txt'  # default fallback
+
+# ---------- Download full video ----------
 def download_video(url, quality='720'):
+    cookie_file = get_cookie_file(url)
     ydl_opts = {
         'format': f'bestvideo[height<={quality}]+bestaudio/best' if quality else 'best',
         'outtmpl': os.path.join(app.config['DOWNLOAD_FOLDER'], '%(title)s.%(ext)s'),
         'quiet': True,
         'noplaylist': True,
         'merge_output_format': 'mp4',
-        'cookiefile': 'cookies.txt',
+        'cookiefile': cookie_file,
         'http_headers': {'User-Agent': 'Mozilla/5.0'}
     }
     with YoutubeDL(ydl_opts) as ydl:
@@ -43,14 +53,15 @@ def download_video(url, quality='720'):
         filename = ydl.prepare_filename(info).replace('.webm', '.mp4').replace('.mkv', '.mp4')
         return info.get('title', 'No Title'), filename
 
-# Download audio only
+# ---------- Download audio only ----------
 def download_audio(url):
+    cookie_file = get_cookie_file(url)
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': os.path.join(app.config['DOWNLOAD_FOLDER'], '%(title)s.%(ext)s'),
         'quiet': True,
         'noplaylist': True,
-        'cookiefile': 'cookies.txt',
+        'cookiefile': cookie_file,
         'http_headers': {'User-Agent': 'Mozilla/5.0'},
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -62,6 +73,7 @@ def download_audio(url):
         filename = os.path.join(app.config['DOWNLOAD_FOLDER'], info['title'] + ".mp3")
         return filename
 
+# ---------- Main Web Page ----------
 @app.route("/", methods=["GET", "POST"])
 def index():
     videos = []
@@ -97,6 +109,7 @@ def index():
 
     return render_template("index.html", videos=videos, message=message)
 
+# ---------- Download video file ----------
 @app.route("/download/<int:video_id>")
 def download(video_id):
     conn = sqlite3.connect('videos.db')
@@ -108,6 +121,7 @@ def download(video_id):
         return send_file(row[0], as_attachment=True)
     return "❌ Video not found", 404
 
+# ---------- Download audio file ----------
 @app.route("/audio/<int:video_id>")
 def download_audio_file(video_id):
     conn = sqlite3.connect('videos.db')
@@ -119,6 +133,6 @@ def download_audio_file(video_id):
         return send_file(row[0], as_attachment=True)
     return "❌ Audio not found", 404
 
-# Run locally (Railway uses Gunicorn)
+# ---------- Run locally ----------
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
