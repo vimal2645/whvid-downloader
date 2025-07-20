@@ -27,11 +27,7 @@ def init_db():
 
 init_db()
 
-# Check for cookies file
-COOKIES_PATH = 'cookies.txt'
-USE_COOKIES = os.path.exists(COOKIES_PATH)
-
-# Download video
+# Download video with yt-dlp and cookies
 def download_video(url, quality='720'):
     ydl_opts = {
         'format': f'bestvideo[height<={quality}]+bestaudio/best' if quality else 'best',
@@ -39,34 +35,28 @@ def download_video(url, quality='720'):
         'quiet': True,
         'noplaylist': True,
         'merge_output_format': 'mp4',
+        'cookiefile': 'cookies.txt',
         'http_headers': {'User-Agent': 'Mozilla/5.0'}
     }
-
-    if USE_COOKIES:
-        ydl_opts['cookies'] = COOKIES_PATH
-
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info).replace('.webm', '.mp4').replace('.mkv', '.mp4')
         return info.get('title', 'No Title'), filename
 
-# Download audio
+# Download audio only
 def download_audio(url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': os.path.join(app.config['DOWNLOAD_FOLDER'], '%(title)s.%(ext)s'),
         'quiet': True,
         'noplaylist': True,
+        'cookiefile': 'cookies.txt',
         'http_headers': {'User-Agent': 'Mozilla/5.0'},
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3'
         }]
     }
-
-    if USE_COOKIES:
-        ydl_opts['cookies'] = COOKIES_PATH
-
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = os.path.join(app.config['DOWNLOAD_FOLDER'], info['title'] + ".mp3")
@@ -76,7 +66,6 @@ def download_audio(url):
 def index():
     videos = []
     message = ""
-
     if request.method == "POST":
         url = request.form.get("url")
         quality = request.form.get("quality", "720")
@@ -130,6 +119,6 @@ def download_audio_file(video_id):
         return send_file(row[0], as_attachment=True)
     return "❌ Audio not found", 404
 
-# Run locally (ignored on Render, where Gunicorn runs it)
+# Run locally (Railway uses Gunicorn)
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
