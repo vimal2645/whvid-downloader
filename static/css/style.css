@@ -220,3 +220,27 @@ body.light-mode h1 {
   background-clip: unset;
   animation: none;
 }
+
+.url-info {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  padding: 15px 25px;
+  background: linear-gradient(135deg, #ff00cc, #3333ff, #00ffff);
+  background-size: 300% 300%;
+  color: white;
+  border-radius: 12px;
+  text-align: center;
+  animation: pulseGlow 3s ease-in-out infinite, gradientMove 8s ease infinite;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 0, 255, 0.8); }
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
